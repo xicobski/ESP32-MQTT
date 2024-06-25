@@ -53,9 +53,9 @@ void app_main() {
 
 - This requires the *mqtt.h* file to be included:
 
-  ```c
-  #include "mqtt.h"
-  ```
+```c
+#include "mqtt.h"
+```
 
 #### MQTT Callback
 - This code implements a callback function when a message is received. This function receives the message's topic and payload:
