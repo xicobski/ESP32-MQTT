@@ -7,9 +7,12 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
+#include "driver/gpio.h"
+
 #include "mqtt_client.h"
 #include "mqtt.h"
 
+#define GPIO_BOARD_LED		GPIO_NUM_2
 #define MQTT_MAX_RETRY		(uint8_t)(3)
 
 static uint8_t NUM_OF_TOPICS = 0;
@@ -22,7 +25,7 @@ static esp_err_t (*mqttCallback)(const char* topic, const char* data);
 static void mqttEventHandler(void* arg, esp_event_base_t base, int32_t id, void* ev);
 static char* formatString(const char* str, const uint8_t len);
 
-void initMqttClient(const char* ip, const uint32_t port, esp_err_t (*callback)(const char*, const char*)) {
+void mqttStart(const char* ip, const uint32_t port, esp_err_t (*callback)(const char*, const char*)) {
 	mqttCallback = callback;
 
 	MQTT_IP = (char*)malloc(strlen(ip));
@@ -42,9 +45,6 @@ void initMqttClient(const char* ip, const uint32_t port, esp_err_t (*callback)(c
 	client = esp_mqtt_client_init(&cfg);
 
 	esp_mqtt_client_register_event(client, ESP_EVENT_ANY_ID, mqttEventHandler, NULL);
-}
-
-void mqttConnect() {
 	esp_mqtt_client_start(client);
 }
 
@@ -97,6 +97,9 @@ static void mqttEventHandler(void* arg, esp_event_base_t base, int32_t id, void*
 				list[t].qos = 2;
 			}
 			esp_mqtt_client_subscribe_multiple(client, list, NUM_OF_TOPICS);
+
+			gpio_set_direction(GPIO_BOARD_LED, GPIO_MODE_OUTPUT);
+			gpio_set_level(GPIO_BOARD_LED, 1);
 	} else if((esp_mqtt_event_id_t)id == MQTT_EVENT_DISCONNECTED) {
 			if (--retry) {
 				printf("[mqtt] Retrying connection (%d/%d)\n", retry+1, MQTT_MAX_RETRY);
