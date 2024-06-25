@@ -1,6 +1,4 @@
 # ESP32-MQTT
----
-
 This implementation was made following the [Espressif Programming Guide](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/protocols/mqtt.html) with the goal of abtracting the use of the esp mqtt library.
 
 ---
