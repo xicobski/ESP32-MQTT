@@ -26,6 +26,7 @@ Dependencies to add to your CMakeLists' SRCS:
 void app_main() {
     nvsInit();
     connectWifi(SSID, PASSWORD);
+    // ...
 }
 ```
 
